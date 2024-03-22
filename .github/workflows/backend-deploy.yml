@@ -26,7 +26,7 @@ jobs:
       - name: Display dotnet version
         run: dotnet --version
       - name: Test the project before packing
-  
+        run: dotnet test backendTest
   Build:
     strategy:
       matrix:
