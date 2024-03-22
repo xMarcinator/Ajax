@@ -10,9 +10,7 @@ on:
       - v1.*
 
 env:
-  IMAGE_NAME: "ajax-backend"
   IMAGE_PREFIX: "marcinator"
-  IMAGE_FULL: "marcinator/ajax-backend"
 
 jobs:
   Test:
@@ -28,13 +26,11 @@ jobs:
       - name: Display dotnet version
         run: dotnet --version
       - name: Test the project before packing
-        run: dotnet test backendTest
-        #- name: build docker image
-        #  run: docker build -t marcinator/student-manager:latest  ./StudentManager/
-        #- name: push image to repo
-        #  run: docker push ${{ env.IMAGE_PREFIX }}/student-manager:latest
   
   Build:
+    strategy:
+      matrix:
+        file: [ "backend", "frontend" ]
     runs-on: ubuntu-latest
     needs: Test
 
@@ -59,7 +55,7 @@ jobs:
             type=ref,event=branch
             type=sha
             type=edge,branch=main
-          images: ${{ env.IMAGE_PREFIX }}/${{env.IMAGE_NAME}}
+          images: ${{ env.IMAGE_PREFIX }}/ajax-${{ matrix.file }}
           flavor: |
             latest=auto
         #https://github.com/docker/build-push-action
@@ -71,7 +67,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./backend/Dockerfile
+          file: ./${{ matrix.file }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -83,7 +79,7 @@ jobs:
   Deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [Test,Build]
+    needs: [Build]
     steps:
       - name: Set the Kubernetes context
         uses: azure/k8s-set-context@v4
@@ -106,5 +102,6 @@ jobs:
             kubernetes/Backend.yaml
             kubernetes/Frontend.yaml
           images: |
-            ${{ env.IMAGE_FULL }}:sha-${{ steps.vars.outputs.sha_short }}
+            ${{ env.IMAGE_PREFIX }}/ajax-backend:sha-${{ steps.vars.outputs.sha_short }}
+            ${{ env.IMAGE_PREFIX }}/ajax-frontend:sha-${{ steps.vars.outputs.sha_short }}
           skip-tls-verify: true
