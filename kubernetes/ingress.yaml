@@ -12,7 +12,18 @@ spec:
         - name: ajax-frontend
           port: 80
     - match: Host(`ajax.marcinator.com`) && PathPrefix(`/api/`)
+      middlewares:
+        - name: api-stripprefix
       kind: Rule
       services:
         - name: ajax-backend
           port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: api-stripprefix
+spec:
+    stripPrefix:
+        prefixes:
+        - /api/

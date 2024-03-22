@@ -27,7 +27,7 @@ metadata:
   name: ajax-frontend
 spec:
   selector:
-    app: ajax-frontend
+    app: ajax-frontend-pod
   ports:
     - protocol: TCP
       port: 80

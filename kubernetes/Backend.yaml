@@ -5,7 +5,7 @@ metadata:
   labels:
     app: ajax-backend-pod
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: ajax-backend-pod
@@ -32,6 +32,10 @@ spec:
               value: "Your_password123"
             - name: DB_NAME
               value: "blogging"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
       restartPolicy: Always
 ---
 apiVersion: v1
@@ -40,7 +44,7 @@ metadata:
   name: ajax-backend
 spec:
   selector:
-    app: ajax-backend
+    app: ajax-backend-pod
   ports:
     - protocol: TCP
       port: 80
