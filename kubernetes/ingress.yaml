@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ajax-ingressroute
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ajax.marcinator.com`)
+      kind: Rule
+      services:
+        - name: ajax-frontend
+          port: 80
+    - match: Host(`ajax.marcinator.com`) && PathPrefix(`/api/`)
+      kind: Rule
+      services:
+        - name: ajax-backend
+          port: 80

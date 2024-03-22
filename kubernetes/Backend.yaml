@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ajax-backend-pod
+  labels:
+    app: ajax-backend-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ajax-backend-pod
+  template:
+    metadata:
+      name: ajax-backend-pod
+      labels:
+        app: ajax-backend-pod
+    spec:
+      containers:
+        - name: ajax-backend-pod
+          image: docker.io/marcinator/ajax-backend:latest
+          imagePullPolicy: IfNotPresent
+          env: 
+            - name: DB_TRUST
+              value: "true"
+            - name: DB_ADDRESS
+              value: "database"
+            - name: DB_PORT
+              value: "1433"
+            - name: DB_USER
+              value: "sa"
+            - name: DB_PASSWORD
+              value: "Your_password123"
+            - name: DB_NAME
+              value: "blogging"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ajax-backend
+spec:
+  selector:
+    app: ajax-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: NodePort

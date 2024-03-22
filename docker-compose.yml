@@ -1,4 +1,18 @@
 ﻿services:
+  # The official v2 Traefik docker image
+  traefik:
+    image: traefik:v2.11
+    ports:
+     # The HTTP port
+     - "80:80"
+     # The Web UI (enabled by --api.insecure=true)
+     - "8080:8080"
+    volumes:
+      - source: /var/run/podman/podman.sock
+        type: bind
+        target: /var/run/docker.sock
+    command:  --api.insecure=true --providers.docker --log.level=DEBUG 
+
   database:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     environment:
@@ -7,6 +21,7 @@
     ports:
       - "1433:1433"
   backend:
+    image: "ajax-backend"
     environment: 
       DB_TRUST: "true"
       DB_ADDRESS: "database"
@@ -17,10 +32,18 @@
     build:
       context: .
       dockerfile: backend/Dockerfile
-    
+    labels:
+      - "traefik.http.routers.ajaxback.rule=Host(`whoami.docker.localhost`) && PathPrefix(`/api/`)"
+      - "traefik.http.services.my-container-service.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.test-stripprefix.stripprefix.prefixes=/api,"
+      - "traefik.http.routers.ajaxback.middlewares=test-stripprefix"
+    depends_on: database   
   frontend:
-    ports:
-      - "80:80"
+    image: "ajax-frontend"
     build:
       context: .
-      dockerfile: frontend/Dockerfile
+      dockerfile: frontend/noproxy.Dockerfile
+    labels:
+      - "traefik.http.routers.ajaxfront.rule=Host(`whoami.docker.localhost`)"
+    depends_on: backend
+    

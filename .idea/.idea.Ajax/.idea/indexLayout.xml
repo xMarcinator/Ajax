@@ -2,7 +2,9 @@
 <project version="4">
   <component name="UserContentModel">
     <attachedFolders>
+      <Path>.github</Path>
       <Path>frontend</Path>
+      <Path>kubernetes</Path>
     </attachedFolders>
     <explicitIncludes />
     <explicitExcludes />
