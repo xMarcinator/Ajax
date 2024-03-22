@@ -84,9 +84,8 @@ jobs:
       - name: Set the Kubernetes context
         uses: azure/k8s-set-context@v4
         with:
-          method: service-account
-          k8s-url: https://cluster.marcinator.com
-          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+          method: kubeconfig
+          kubeconfig: <your kubeconfig>
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Set up kubectl
