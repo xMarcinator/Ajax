@@ -1,0 +1,110 @@
+name: GitHub Actions CD
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:
+      - main
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - v2
+      - v1.*
+
+env:
+  IMAGE_NAME: "ajax-backend"
+  IMAGE_PREFIX: "marcinator"
+  IMAGE_FULL: "marcinator/ajax-backend"
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet '8.0.x'
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      # You can test your matrix by printing the current dotnet version
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Test the project before packing
+        run: dotnet test backendTest
+        #- name: build docker image
+        #  run: docker build -t marcinator/student-manager:latest  ./StudentManager/
+        #- name: push image to repo
+        #  run: docker push ${{ env.IMAGE_PREFIX }}/student-manager:latest
+  
+  Build:
+    runs-on: ubuntu-latest
+    needs: Test
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to DockerHub Registry
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        #- name: build docker image
+        #  run: docker build -t marcinator/student-manager:latest  ./StudentManager/
+        #- name: push image to repo
+        #  run: docker push ${{ env.IMAGE_PREFIX }}/student-manager:latest
+        
+        # https://github.com/docker/metadata-action
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          tags: |
+            type=raw,latest
+            type=schedule
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{major}}.{{minor}}
+            type=semver,pattern=v{{major}}
+            type=ref,event=branch
+            type=sha
+            type=edge,branch=main
+          images: ${{ env.IMAGE_PREFIX }}/${{env.IMAGE_NAME}}
+          flavor: |
+            latest=auto
+        #https://github.com/docker/build-push-action
+      - name: Get short sha as metadata-action does it
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            "COMMIT_SHA_ARG=${{ steps.vars.outputs.sha_short }}"
+
+  Deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [Test,Build]
+    steps:
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: https://cluster.marcinator.com:6443
+          k8s-secret: ${{ secrets.KUBERNETES_SECRET }}
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Get short sha as metadata-action does it
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
+        with:
+          namespace: ajax
+          manifests: |
+            StudentManager/.config/DatabaseDeployment.yaml
+            StudentManager/.config/WebDeployment.yaml
+          images: |
+            ${{ env.IMAGE_FULL }}:sha-${{ steps.vars.outputs.sha_short }}
+          skip-tls-verify: true
