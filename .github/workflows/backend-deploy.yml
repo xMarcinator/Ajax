@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup dotnet '8.0.x'
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
       # You can test your matrix by printing the current dotnet version
@@ -86,7 +86,7 @@ jobs:
     needs: [Test,Build]
     steps:
       - name: Set the Kubernetes context
-        uses: azure/k8s-set-context@v2
+        uses: azure/k8s-set-context@v4
         with:
           method: service-account
           k8s-url: https://cluster.marcinator.com
@@ -99,7 +99,7 @@ jobs:
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Deploy to the Kubernetes cluster
-        uses: azure/k8s-deploy@v1
+        uses: Azure/k8s-deploy@v5
         with:
           namespace: ajax
           manifests: |
