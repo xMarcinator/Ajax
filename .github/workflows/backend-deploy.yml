@@ -103,8 +103,8 @@ jobs:
         with:
           namespace: ajax
           manifests: |
-            StudentManager/.config/DatabaseDeployment.yaml
-            StudentManager/.config/WebDeployment.yaml
+            kubernetes/Backend.yaml
+            kubernetes/Frontend.yaml
           images: |
             ${{ env.IMAGE_FULL }}:sha-${{ steps.vars.outputs.sha_short }}
           skip-tls-verify: true
