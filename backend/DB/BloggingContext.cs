@@ -22,7 +22,7 @@ public class BloggingContext : DbContext
         {
             if (EnvReader.TryGetStringValue("DB_PORT", out var port))
             {
-                
+                //connectionBuilder.
                 connectionBuilder.DataSource = $"{address},{port}";
             }
             else

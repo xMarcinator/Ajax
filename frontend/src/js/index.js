@@ -1,7 +1,7 @@
 const host = "/api";
 
 window.addEventListener("load", async (event) => {
-    let repsonse = await fetch(host+"/weatherforecast",{
+    let repsonse = await fetch(API_PREFIX+"/weatherforecast",{
         method: "GET",
     });
     let data = await repsonse.json();

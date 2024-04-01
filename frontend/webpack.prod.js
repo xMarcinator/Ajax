@@ -1,3 +1,6 @@
+const webpack = require("webpack");
+
+
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 
@@ -13,4 +16,10 @@ module.exports = merge(common, {
         chunkFilename: "static/js/[name].[contenthash].js",
         assetModuleFilename: "static/[hash][ext][query]",
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            API_PREFIX: JSON.stringify("/api"),
+        })
+    ]
+    
 });

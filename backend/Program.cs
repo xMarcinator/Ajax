@@ -13,6 +13,25 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BloggingContext>();
 
+#if DEBUG
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+Console.WriteLine("Debug version");
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(name: MyAllowSpecificOrigins,
+            policy  =>
+            {
+                policy.AllowAnyOrigin();
+            });
+    });
+}
+#endif
+
+
+
 var app = builder.Build();
 
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -43,11 +62,16 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 
 app.MapControllers();
 
+#if DEBUG
+app.UseCors(MyAllowSpecificOrigins);
+#endif
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
 }
 
 app.UseHttpsRedirection();
