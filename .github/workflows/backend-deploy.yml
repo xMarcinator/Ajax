@@ -88,8 +88,6 @@ jobs:
           kubeconfig: ${{ secrets.KUBERNETES_SECRET }}
       - name: Checkout source code
         uses: actions/checkout@v3
-      - name: Set up kubectl
-        run: cat $KUBECONFIG
 
       - name: Get short sha as metadata-action does it
         id: vars
