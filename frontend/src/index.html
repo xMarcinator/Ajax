@@ -8,7 +8,20 @@
 </head>
 <body>
 <main>
-    <h1>hello</h1>
+    <form id="AddForm">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" placeholder="Name">
+        <label for="phone">Phone Number</label>
+        <input type="tel" name="phone" id="phone" placeholder="Phone Number" pattern="[0-9]{8}" required>
+        <input type="submit" value="Register">
+    </form>
+    <ul id="List">
+        <li>Loading...</li>
+    </ul>
+
+    <ul id="temp">
+        <li>Loading...</li>
+    </ul>
 </main>
 </body>
 </html>
