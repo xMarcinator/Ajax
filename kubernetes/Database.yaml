@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ajax-database-pod
+  labels:
+    app: ajax-database-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ajax-database-pod
+  template:
+    metadata:
+      name: ajax-database-pod
+      labels:
+        app: ajax-database-pod
+    spec:
+      containers:
+        - name: ajax-database-pod
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      
