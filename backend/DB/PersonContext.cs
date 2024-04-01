@@ -1,11 +1,12 @@
 using dotenv.net.Utilities;
-using Microsoft.AspNetCore.Connections;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
-public class BloggingContext : DbContext
+namespace backend.DB;
+
+public class PersonContext : DbContext
 {
-    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Person> Persons { get; set; }
 
     // The following configures EF to create a Sqlite database file in the
     // special "local" folder for your platform.
@@ -39,8 +40,10 @@ public class BloggingContext : DbContext
          
         if (EnvReader.TryGetBooleanValue("DB_TRUST",out var trust))
             connectionBuilder.TrustServerCertificate = trust;
-        
+
+        #if DEBUG
         Console.WriteLine("Connection String: " + connectionBuilder.ConnectionString);
+        #endif
         
         options.UseSqlServer(connectionBuilder.ConnectionString);
     }

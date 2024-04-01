@@ -1,3 +1,4 @@
+using backend.DB;
 using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<BloggingContext>();
+builder.Services.AddDbContext<PersonContext>();
 
 #if DEBUG
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -37,7 +38,7 @@ var app = builder.Build();
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    var db = serviceScope.ServiceProvider.GetRequiredService<BloggingContext>().Database;
+    var db = serviceScope.ServiceProvider.GetRequiredService<PersonContext>().Database;
 
     logger.LogInformation("Migrating database...");
 
@@ -51,7 +52,7 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 
     try
     {
-        serviceScope.ServiceProvider.GetRequiredService<BloggingContext>().Database.Migrate();
+        serviceScope.ServiceProvider.GetRequiredService<PersonContext>().Database.Migrate();
         logger.LogInformation("Database migrated successfully.");
     }
     catch (Exception ex)
