@@ -100,10 +100,10 @@ jobs:
         with:
           namespace: ajax
           manifests: |
-            kubernetes/Backend.yaml
-            kubernetes/Frontend.yaml
-         #   kubernetes/Database.yaml
             kubernetes/ingress.yaml
+            kubernetes/Backend.yaml
+            kubernetes/Frontend.yaml            
+          #   kubernetes/Database.yaml
           images: |
             ${{ env.IMAGE_PREFIX }}/ajax-backend:sha-${{ steps.vars.outputs.sha_short }}
             ${{ env.IMAGE_PREFIX }}/ajax-frontend:sha-${{ steps.vars.outputs.sha_short }}
