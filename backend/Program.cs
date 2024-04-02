@@ -69,6 +69,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 #if DEBUG
+//this is only included in debug builds
 app.UseCors(MyAllowSpecificOrigins);
 #endif
 

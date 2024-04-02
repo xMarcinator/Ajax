@@ -42,7 +42,7 @@
     image: "ajax-frontend"
     build:
       context: .
-      dockerfile: frontend/noproxy.Dockerfile
+      dockerfile: frontend/Dockerfile
     labels:
       - "traefik.http.routers.ajaxfront.rule=Host(`whoami.docker.localhost`)"
     depends_on: backend

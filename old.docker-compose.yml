@@ -26,5 +26,5 @@
       - "80:80"
     build:
       context: .
-      dockerfile: frontend/Dockerfile
+      dockerfile: frontend/proxy.Dockerfile
     depends_on: backend

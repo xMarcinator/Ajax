@@ -11,7 +11,7 @@ RUN pnpm run build
 
 FROM nginx
 # Copy the default nginx.conf provided by tiangolo/node-frontend
-COPY frontend/noproxy.nginx.conf /etc/nginx/conf.d/default.conf
+COPY frontend/proxy.nginx.conf /etc/nginx/conf.d/default.conf
 
 #Copy the static file from the build stage to the nginx server
 COPY --from=build /app/dist   /var/www/html
