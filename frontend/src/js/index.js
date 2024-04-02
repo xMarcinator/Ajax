@@ -5,7 +5,7 @@ window.addEventListener("load", async (event) => {
         method: "GET",
     });
     let data = await repsonse.json();
-    console.log(data);
+    //console.log(data);
 
     // Clear the list
     temp.replaceChildren()
@@ -26,7 +26,7 @@ window.addEventListener("load", async (event) => {
     });
     
     let data = await repsonse.json();
-    console.log(data);
+    //console.log(data);
 
     // Clear the list
     list.replaceChildren()
@@ -64,28 +64,19 @@ async function addPerson(event) {
         },
         body: JSON.stringify(data),
     })
-    .then(async (res) => {
-        
-        console.log(res);
-        
+    .then(async (res) => {        
         data.personId = await res.json();
-        console.log(data);
-        
         instertHTMLPerson(data);
     });
 }
 
 document.getElementById("List").addEventListener("click", handleDeletePerson);
 
-async function handleDeletePerson(event) {
-    console.log("click", event.target,event.currentTarget);
-    
+async function handleDeletePerson(event) {    
     if (event.target.tagName !== "BUTTON") return;
     
     let personId = event.target.parentElement.id.split("-")[1];
     
-    console.log(personId);
-
     deletePerson(personId);
 }
     
@@ -102,7 +93,7 @@ function deletePerson(id) {
         method: "DELETE",
     })
     .then((res) => {
-        console.log(res);
+        //console.log(res);
         document.getElementById(`person-${id}`).remove();
     });
 }
