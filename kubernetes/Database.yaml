@@ -6,7 +6,7 @@ metadata:
     app: ajax-database-set
 spec:
   serviceName: "mssql" # serviceName is the name of the service that governs this StatefulSet. This service must exist before the StatefulSet, and is responsible for the network identity of the set.
-  replicas: 1 # only one pod, with one SQL Server instance deployed.
+  replicas: 0 # only one pod, with one SQL Server instance deployed.
   selector:
     matchLabels:
       app: ajax-database-pod  # this has to be the same as .spec.template.metadata.labels

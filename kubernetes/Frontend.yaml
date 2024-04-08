@@ -5,7 +5,7 @@ metadata:
   labels:
     app: ajax-frontend-pod
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: ajax-frontend-pod
